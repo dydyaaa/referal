@@ -68,7 +68,7 @@ source venv/bin/activate  # Для Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-# 4. Настройка базы данных
+### 4. Настройка базы данных
 * Запустите файл docker-compose.yaml
 ```bash
 docker compose up --build # При первом запуске
@@ -94,16 +94,16 @@ flask db migrate -m "Initial migration"
 flask db upgrade
 ```
 -----
-### Запуск проекта
+### 6. Запуск проекта
 ```bash
 python3 wsgi.py
 ```
 По умолчанию сервер будет доступен по адресу <a href="http://127.0.0.1:5000" style="color:#e6c07b;">http://127.0.0.1:5000</a>
-### Документация API
+### 7. Документация API
 ```
 http://127.0.0.1:5000/swagger
 ```
-### Основные эндпоинты
+### 8. Основные эндпоинты
 | Метод   | Эндпоинт                                                    | Описание                     | Аутентификация |
 |---------|-------------------------------------------------------------|------------------------------|----------------|
 | POST    | <span style="color:#e6c07b;">/auth/register</span>          | Регистрация пользователя     | Нет            |
@@ -113,14 +113,14 @@ http://127.0.0.1:5000/swagger
 | GET     | <span style="color:#e6c07b;">/referral/code/by-email</span> | Получение кода по email      | Нет            |
 | GET     | <span style="color:#e6c07b;">/referral/referrals</span>     | Получение списка рефералов   | JWT            |
 
-### Тестирование
+### 9. Тестирование
 Тесты находятся в папке <span style="color:#e6c07b;">/tests</span>. Для запуска:
 ```bash
 python3 -m unittest
 ```
 Тестов пока нет, но когда-нибудь я их деделаю, общеаю.
 
-### Структура проекта
+### 10. Структура проекта
 ```
 referral-system-api/
 ├── app/
