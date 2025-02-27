@@ -1,0 +1,206 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Referral System API",
+      "version": "1.0.1",
+      "description": "API для реферальной системой"
+    },
+    "paths": {
+      "/auth/register": {
+        "post": {
+          "summary": "Register a new user",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "email": {"type": "string"},
+                    "password": {"type": "string"},
+                    "referral_code": {"type": "string", "nullable": true}
+                  },
+                  "required": ["email", "password"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "User registered",
+              "content": {
+                "application/json": {
+                  "example": {"result": "registered", "token": "jwt_token"}
+                }
+              }
+            },
+            "400": {"description": "Invalid input"}
+          }
+        }
+      },
+      "/auth/login": {
+        "post": {
+          "summary": "Login a user",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "email": {"type": "string"},
+                    "password": {"type": "string"}
+                  },
+                  "required": ["email", "password"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "User logged in",
+              "content": {
+                "application/json": {
+                  "example": {"result": "logged in", "token": "jwt_token"}
+                }
+              }
+            },
+            "401": {"description": "Invalid credentials"}
+          }
+        }
+      },
+      "/referral/code": {
+        "post": {
+          "summary": "Create a referral code",
+          "security": [{"JWT": []}],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "expires_at": {"type": "string", "format": "date"}
+                  },
+                  "required": ["expires_at"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Code created",
+              "content": {
+                "application/json": {
+                  "example": {"referral_code": "ABC12345"}
+                }
+              }
+            },
+            "400": {"description": "Invalid input"}
+          }
+        },
+        "delete": {
+            "summary": "Delete referral code",
+            "security": [{ "BearerAuth": [] }],
+            "responses": {
+              "200": {
+                "description": "Code deleted",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "400": {
+                "description": "Error deleting code"
+              }
+            }
+          }
+      },
+      "/code/by-email": {
+        "get": {
+          "summary": "Get referral code by email",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Referrals by email",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "referral_code": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Error receiving code"
+            }
+          }
+        }
+      },
+      "/referrals": {
+        "get": {
+          "summary": "Get referral list",
+          "security": [{ "BearerAuth": [] }],
+          "responses": {
+            "200": {
+              "description": "Referral's list",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "referrals": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "securitySchemes": {
+        "JWT": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      }
+    }
+  }

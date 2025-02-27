@@ -1,6 +1,7 @@
 import os
 import json
-import logging
+import redis
+from logging_config import setup_logging
 from flask import Flask, jsonify
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -13,26 +14,28 @@ migrate = Migrate()
 jwt = JWTManager()
 
 
-def create_app():
+def create_app(test_cfg=False):
     
     app = Flask(__name__)
-    config_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'settings.json'))
+    settings = 'settings_test' if test_cfg else 'settings'
+    config_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', f'{settings}.json'))
     
     with open(config_path) as config_file:
         config = json.load(config_file)
-        app.config['SECRET_KEY'] = config.get('SECRET_KEY')
-        app.config['SQLALCHEMY_DATABASE_URI'] = config.get('SQLALCHEMY_DATABASE_URI')
-        app.config['JWT_SECRET_KEY'] = config.get('JWT_SECRET_KEY')
-        app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+        app.config.update(config)
         
+    setup_logging()
+    app.logger.info("Application starting up")
+    
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
+    app.redis = redis.Redis.from_url(app.config['REDIS_URL'], decode_responses=True)
         
     from app.routes.auth import auth_bp
-    app.register_blueprint(auth_bp)
+    app.register_blueprint(auth_bp, url_prefix='/auth')
     from app.routes.referral import referral_bp
-    app.register_blueprint(referral_bp)
+    app.register_blueprint(referral_bp, url_prefix='/referral')
     
     swagger_ui = get_swaggerui_blueprint('/swagger', '/static/swagger.json')
     app.register_blueprint(swagger_ui)

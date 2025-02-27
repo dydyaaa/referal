@@ -9,7 +9,7 @@ referral_bp = Blueprint('referral', __name__)
 def create_referral_code():
     user_id = get_jwt_identity()
     data = request.get_json()
-    expires_at = data.get('expires_at')  # формат: "YYYY-MM-DD"
+    expires_at = data.get('expires_at')
     
     code = ReferralService.create_code(user_id, expires_at)
     return jsonify({'referral_code': code}), 201
@@ -18,14 +18,21 @@ def create_referral_code():
 @jwt_required()
 def delete_referral_code():
     user_id = get_jwt_identity()
-    ReferralService.delete_code(user_id)
-    return jsonify({'message': 'Referral code deleted'}), 200
+    try:
+        ReferralService.delete_code(user_id)
+        return jsonify({'message': 'Referral code deleted'}), 200
+    except ValueError as error:
+        return jsonify({'message': f'{error}'}), 400
 
 @referral_bp.route('/code/by-email', methods=['GET'])
 def get_code_by_email():
-    email = request.args.get('email')
-    code = ReferralService.get_code_by_email(email)
-    return jsonify({'referral_code': code}), 200
+    data = request.get_json()
+    email = data.get('email')
+    try:
+        code = ReferralService.get_code_by_email(email)
+        return jsonify({'referral_code': code}), 200
+    except ValueError as error:
+        return jsonify({'message': f'{error}'})
 
 @referral_bp.route('/referrals', methods=['GET'])
 @jwt_required()

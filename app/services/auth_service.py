@@ -1,10 +1,38 @@
+import requests
+import logging
 from app import db
+from flask import current_app
+from datetime import datetime
 from app.models.user import User
 from app.models.referral import Referral
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
+
+
+logger = logging.getLogger('app.auth')
+
 
 class AuthService:
+    @staticmethod
+    def validate_email(email):
+        """
+        Проверка валидности email через Email Hunter API.
+        """
+        api_key = current_app.config.get('EMAIL_HUNTER_API_KEY')
+        if not api_key:
+            logger.error('Email Hunter API key is not configured')
+            return True
+        
+        url = f'https://api.hunter.io/v2/email-verifier?email={email}&api_key={api_key}'
+
+        try:
+            response = requests.get(url)
+            data = response.json()
+            logger.debug(f'Email Hunter response for {email}')
+            return data.get("data", {}).get("status") == "valid"
+        except requests.RequestException:
+            logger.error('Email verification failed')
+            return True # Если API недоступен, пропускаем валидацию
+
     @staticmethod
     def register(email, password, referral_code=None):
         """
@@ -20,7 +48,12 @@ class AuthService:
         """
         # Проверка, существует ли пользователь с таким email
         if User.query.filter_by(email=email).first():
-            raise ValueError("Email is already registered")
+            logger.warning('Registration with existing email')
+            raise ValueError('Email is already registered')
+        
+        if not AuthService.validate_email(email):
+            logger.warning('Invalid email for registration')
+            raise ValueError('Invalid email address')
         
         # Хеширование пароля
         password_hash = generate_password_hash(password)
@@ -30,7 +63,8 @@ class AuthService:
         if referral_code:
             referral = Referral.query.filter_by(code=referral_code, is_active=True).first()
             if not referral or referral.expires_at < datetime.now():
-                raise ValueError("Invalid or expired referral code")
+                logger.warning('Invalid or expired referral code')
+                raise ValueError('Invalid or expired referral code')
             referred_by = referral.user_id
         
         # Создание нового пользователя
@@ -42,6 +76,7 @@ class AuthService:
         
         db.session.add(new_user)
         db.session.commit()
+        logger.info(f'User registered successfully: {email}')
         return new_user
 
     @staticmethod
@@ -58,5 +93,7 @@ class AuthService:
         """
         user = User.query.filter_by(email=email).first()
         if not user or not check_password_hash(user.password_hash, password):
+            logger.warning(f'Failed login for {email}')
             raise ValueError("Invalid email or password")
+        logger.info(f"Success login for {email}")
         return user

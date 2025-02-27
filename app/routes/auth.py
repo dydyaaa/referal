@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required
-from app.services.auth_service import AuthService 
+from app.services.auth_service import AuthService
 
 
 auth_bp = Blueprint('auth', __name__)
@@ -11,14 +11,25 @@ def register():
     email, password = data.get('email'), data.get('password')
     referral_code = data.get('referral_code')
     
-    user = AuthService.register(email, password, referral_code)
-    return jsonify({'message': 'User registered', 'user_id': user.id}), 201
+    try:
+        user = AuthService.register(email, password, referral_code)
+        access_token = create_access_token(identity=str(user.id))
+        return jsonify({'message': 'User registered', 
+                        'user_id': user.id, 
+                        'access_token': access_token}), 201
+    except ValueError as error:
+        return jsonify({'message': f'{error}'}), 400
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
     email, password = data.get('email'), data.get('password')
     
-    user = AuthService.login(email, password)
-    access_token = create_access_token(identity=user.id)
-    return jsonify({'access_token': access_token}), 200
+    try:
+        user = AuthService.login(email, password)
+        access_token = create_access_token(identity=str(user.id))
+        return jsonify({'message': 'User authorized',
+                        'user_id': user.id,
+                        'access_token': access_token}), 200
+    except ValueError as error:
+        return jsonify({'message': f'{error}'}), 401

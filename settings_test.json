@@ -1,0 +1,7 @@
+{
+    "SECRET_KEY": "your-secret-key",
+    "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
+    "JWT_SECRET_KEY": "your-jwt-secret-key",
+    "EMAIL_HUNTER_API_KEY": "ae28d8a7b4b368f30f3f49bbaadd5e1572e77b80",
+    "REDIS_URL": "redis://localhost:6379/0"
+}
