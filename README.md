@@ -124,7 +124,7 @@ python3 -m unittest
 ```
 referral-system-api/
 ├── app/
-│   ├── __init__.py         # Инициализация приложения
+│   ├── __init__.py        # Инициализация приложения
 │   ├── models/            # Модели базы данных
 │   ├── routes/            # Маршруты API
 │   ├── services/          # Бизнес-логика
