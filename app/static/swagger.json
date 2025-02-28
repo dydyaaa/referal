@@ -124,8 +124,8 @@
             }
           }
       },
-      "/code/by-email": {
-        "get": {
+      "/referral/code/by-email": {
+        "post": {
           "summary": "Get referral code by email",
           "requestBody": {
             "required": true,
@@ -164,7 +164,7 @@
           }
         }
       },
-      "/referrals": {
+      "/referral/referrals": {
         "get": {
           "summary": "Get referral list",
           "security": [{ "BearerAuth": [] }],

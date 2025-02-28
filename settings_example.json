@@ -3,5 +3,6 @@
     "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
     "JWT_SECRET_KEY": "your-jwt-secret-key",
     "EMAIL_HUNTER_API_KEY": "your-email-hunter-api-key",
+    "JWT_ACCESS_TOKEN_EXPIRES": 3600,
     "REDIS_URL": "redis://localhost:6379/0"
 }
