@@ -24,7 +24,7 @@ def delete_referral_code():
     except ValueError as error:
         return jsonify({'message': f'{error}'}), 400
 
-@referral_bp.route('/code/by-email', methods=['GET'])
+@referral_bp.route('/code/by-email', methods=['POST'])
 def get_code_by_email():
     data = request.get_json()
     email = data.get('email')
