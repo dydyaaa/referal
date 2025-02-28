@@ -14,17 +14,17 @@ migrate = Migrate()
 jwt = JWTManager()
 
 
-def create_app(test_cfg=False):
+def create_app(test_mode=False):
     
     app = Flask(__name__)
-    settings = 'settings_test' if test_cfg else 'settings'
+    settings = 'settings_test' if test_mode else 'settings'
     config_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', f'{settings}.json'))
     
     with open(config_path) as config_file:
         config = json.load(config_file)
         app.config.update(config)
         
-    setup_logging()
+    setup_logging(test_mode)
     app.logger.info("Application starting up")
     
     db.init_app(app)

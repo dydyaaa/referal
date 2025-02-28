@@ -5,7 +5,7 @@ from flask_jwt_extended import create_access_token
 
 class TestAPI(unittest.TestCase):
     def setUp(self):
-        self.app = create_app(test_cfg=True)
+        self.app = create_app(test_mode=True)
         self.app_context = self.app.app_context()
         self.app_context.push()
         self.client = self.app.test_client()

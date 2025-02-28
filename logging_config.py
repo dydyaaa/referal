@@ -11,69 +11,70 @@ class WerkzeugFilter(logging.Filter):
         record.msg = record.msg.rstrip('- ')
         return True
 
-LOGGING_CONFIG = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'standard': {
-            'format': '%(levelname)s | %(name)s | %(asctime)s | line %(lineno)d | %(message)s',
-            'datefmt': '%Y-%m-%d %H:%M:%S'
+
+def setup_logging(test_mode):
+    """Настройка логирования через dictConfig."""
+    LOGGING_CONFIG = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'formatters': {
+            'standard': {
+                'format': '%(levelname)s | %(name)s | %(asctime)s | line %(lineno)d | %(message)s',
+                'datefmt': '%Y-%m-%d %H:%M:%S'
+            },
+            'werkzeug': {
+                'format': '%(levelname)s | %(name)s | %(asctime)s | line %(lineno)d | %(message)s',
+                'datefmt': '%Y-%m-%d %H:%M:%S'
+            },
         },
-        'werkzeug': {
-            'format': '%(levelname)s | %(name)s | %(asctime)s | line %(lineno)d | %(message)s',
-            'datefmt': '%Y-%m-%d %H:%M:%S'
+        'handlers': {
+            'console': {
+                'class': 'logging.StreamHandler',
+                'level': 'INFO',
+                'formatter': 'standard',
+                'stream': 'ext://sys.stdout',
+            },
+            'error_file': {
+                'class': 'logging.FileHandler',
+                'level': 'ERROR',
+                'formatter': 'standard',
+                'filename': 'error.log',
+                'mode': 'a',
+            },
         },
-    },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'level': 'INFO',
-            'formatter': 'standard',
-            'stream': 'ext://sys.stdout',
+        'loggers': {
+            '': {
+                'handlers': ['console'] if test_mode else ['console', 'error_file'],
+                'level': 'INFO',
+                'propagate': True,
+            },
+            'werkzeug': {
+                'handlers': ['console'] if test_mode else ['console', 'error_file'],
+                'level': 'INFO',
+                'propagate': False,
+                'filters': ['werkzeug_filter'],
+            },
+            'app': {
+                'handlers': ['console'] if test_mode else ['console', 'error_file'],
+                'level': 'INFO',
+                'propagate': False,
+            },
+            'app.auth': {
+                'handlers': ['console'] if test_mode else ['console', 'error_file'],
+                'level': 'INFO',
+                'propagate': False,
+            },
+            'app.referral': {
+                'handlers': ['console'] if test_mode else ['console', 'error_file'],
+                'level': 'INFO',
+                'propagate': False,
+            },
         },
-        'error_file': {
-            'class': 'logging.FileHandler',
-            'level': 'ERROR',
-            'formatter': 'standard',
-            'filename': 'error.log',
-            'mode': 'a',
-        },
-    },
-    'loggers': {
-        '': {
-            'handlers': ['console', 'error_file'],
-            'level': 'INFO',
-            'propagate': True,
-        },
-        'werkzeug': {
-            'handlers': ['console', 'error_file'],
-            'level': 'INFO',
-            'propagate': False,
-            'filters': ['werkzeug_filter'],  # ⬅️ Добавили фильтр
-        },
-        'app': {
-            'handlers': ['console', 'error_file'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-        'app.auth': {
-            'handlers': ['console', 'error_file'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-        'app.referral': {
-            'handlers': ['console', 'error_file'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-    },
-    'filters': {
-        'werkzeug_filter': {
-            '()': WerkzeugFilter
+        'filters': {
+            'werkzeug_filter': {
+                '()': WerkzeugFilter
+            }
         }
     }
-}
-
-def setup_logging():
-    """Настройка логирования через dictConfig."""
+    
     dictConfig(LOGGING_CONFIG)
