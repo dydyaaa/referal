@@ -33,3 +33,13 @@ def login():
                         'access_token': access_token}), 200
     except ValueError as error:
         return jsonify({'message': f'{error}'}), 401
+    
+@auth_bp.route('/reset_password', methods=['POST'])
+def reset_password():
+    data = request.get_json()
+    email = data.get('email')
+    try:
+        user = AuthService.reset_password(email)
+        return jsonify({'message': f'Password reset for {user.email}'}), 200
+    except ValueError as error:
+        return jsonify({'message': f'{error}'}), 400

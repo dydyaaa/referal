@@ -5,6 +5,7 @@ from flask import current_app
 from datetime import datetime
 from app.models.user import User
 from app.models.referral import Referral
+from app.utils.password_generator import generate_password
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
@@ -96,4 +97,29 @@ class AuthService:
             logger.warning(f'Failed login for {email}')
             raise ValueError("Invalid email or password")
         logger.info(f"Success login for {email}")
+        return user
+    
+    @staticmethod
+    def reset_password(email):
+        """
+        Сбрс пароля пользователя.
+        Аргументы:
+            email: str - Email пользователя
+        Возвращает:
+        ---
+        Исключения:
+            ValueError - Если пользователя с таким email не существует
+        """
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            logger.warning(f'Failed change password for {email}')
+            raise ValueError('Invalid email')
+        
+        new_password = generate_password()
+        print(new_password)
+        # send_email 
+        
+        
+        user.password_hash = generate_password_hash(new_password)
+        db.session.commit()
         return user
