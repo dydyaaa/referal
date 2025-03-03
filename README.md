@@ -108,6 +108,7 @@ http://127.0.0.1:5000/swagger
 |---------|-------------------------------------------------------------|------------------------------|----------------|
 | POST    | <span style="color:#e6c07b;">/auth/register</span>          | Регистрация пользователя     | Нет            |
 | POST    | <span style="color:#e6c07b;">/auth/login</span>             | Вход в систему               | Нет            |
+| POST    | <span style="color:#e6c07b;">/auth/reset_password</span>    | Сброс пароля                 | Нет            |
 | POST    | <span style="color:#e6c07b;">/referral/code</span>          | Создание реферального кода   | JWT            |
 | DELETE  | <span style="color:#e6c07b;">/referral/code</span>          | Удаление активного кода      | JWT            |
 | GET     | <span style="color:#e6c07b;">/referral/code/by-email</span> | Получение кода по email      | Нет            |

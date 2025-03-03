@@ -2,6 +2,6 @@
     "SECRET_KEY": "test-secret-key",
     "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
     "JWT_SECRET_KEY": "test-jwt-secret-key",
-    "REDIS_URL": "redis://localhost:6379/0",
+    "REDIS_URL_CHACE": "redis://localhost:6379/0",
     "JWT_ACCESS_TOKEN_EXPIRES": 3600
 }

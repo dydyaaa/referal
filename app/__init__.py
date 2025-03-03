@@ -5,6 +5,7 @@ from logging_config import setup_logging
 from flask import Flask, jsonify
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from flask_mail import Mail
 from flask_jwt_extended import JWTManager
 from flask_swagger_ui import get_swaggerui_blueprint
 
@@ -12,6 +13,7 @@ from flask_swagger_ui import get_swaggerui_blueprint
 db = SQLAlchemy()
 migrate = Migrate()
 jwt = JWTManager()
+mail = Mail()
 
 
 def create_app(test_mode=False):
@@ -30,7 +32,9 @@ def create_app(test_mode=False):
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
-    app.redis = redis.Redis.from_url(app.config['REDIS_URL'], decode_responses=True)
+    mail.init_app(app)
+    
+    app.redis = redis.Redis.from_url(app.config['REDIS_URL_CHACE'], decode_responses=True)
         
     from app.routes.auth import auth_bp
     app.register_blueprint(auth_bp, url_prefix='/auth')

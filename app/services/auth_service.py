@@ -5,6 +5,7 @@ from flask import current_app
 from datetime import datetime
 from app.models.user import User
 from app.models.referral import Referral
+from app.utils.message_sendrer import send_password
 from app.utils.password_generator import generate_password
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -116,9 +117,12 @@ class AuthService:
             raise ValueError('Invalid email')
         
         new_password = generate_password()
-        print(new_password)
-        # send_email 
+        # print(new_password)
         
+        try:
+            send_password(email, new_password)
+        except Exception as error:
+            pass
         
         user.password_hash = generate_password_hash(new_password)
         db.session.commit()
