@@ -1,5 +1,5 @@
 services:
-  db_curs:
+  referral_db:
     container_name: referral_db
     ports:
       - "5432:5432"
@@ -8,8 +8,19 @@ services:
       - POSTGRES_USER=admin
       - POSTGRES_DB=referral_db
     image: postgres:14.3-alpine
+
   redis_codes:
     container_name: redis_codes
     ports:
       - "6379:6379"
     image: redis:7.2
+
+  # rabbitmq:
+  #   container_name: rabbitmq
+  #   ports:
+  #     - "5672:5672"
+  #     - "15672:15672"
+  #   environment:
+  #     - RABBITMQ_DEFAULT_USER=admin
+  #     - RABBITMQ_DEFAULT_PASS=admin
+  #   image: rabbitmq:3.12-management

@@ -1,6 +1,7 @@
 import os
 import json
 import redis
+from celery import Celery
 from logging_config import setup_logging
 from flask import Flask, jsonify
 from flask_migrate import Migrate
@@ -15,6 +16,16 @@ migrate = Migrate()
 jwt = JWTManager()
 mail = Mail()
 
+
+def make_celery(app):
+    celery = Celery(
+        app.import_name,
+        backend=app.config['REDIS_URL_BROKER'],
+        broker=app.config['REDIS_URL_BROKER']
+    )
+
+    celery.conf.update(app.config)
+    return celery
 
 def create_app(test_mode=False):
     
@@ -34,8 +45,9 @@ def create_app(test_mode=False):
     jwt.init_app(app)
     mail.init_app(app)
     
-    app.redis = redis.Redis.from_url(app.config['REDIS_URL_CHACE'], decode_responses=True)
-        
+    app.redis = redis.Redis.from_url(app.config['REDIS_URL_CACHE'], decode_responses=True)
+    app.celery = make_celery(app)
+
     from app.routes.auth import auth_bp
     app.register_blueprint(auth_bp, url_prefix='/auth')
     from app.routes.referral import referral_bp
@@ -49,3 +61,6 @@ def create_app(test_mode=False):
         return jsonify({'message': 'Not Found'}), 404
     
     return app
+
+app = create_app()
+celery = app.celery

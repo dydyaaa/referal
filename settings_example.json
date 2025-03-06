@@ -5,6 +5,7 @@
     "EMAIL_HUNTER_API_KEY": "your-email-hunter-api-key",
     "JWT_ACCESS_TOKEN_EXPIRES": 3600,
     "REDIS_URL_CHACE": "redis://localhost:6379/0",
+    "REDIS_URL_BROKER": "redis://localhost:6379/0",
     "MAIL_SERVER": "smtp.mail.ru",
     "MAIL_PORT": 465,
     "MAIL_USE_TLS": 0,

@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token, jwt_required
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from app.services.auth_service import AuthService
 
 
@@ -43,3 +43,17 @@ def reset_password():
         return jsonify({'message': f'Password reset for {user.email}'}), 200
     except ValueError as error:
         return jsonify({'message': f'{error}'}), 400
+    
+@auth_bp.route('/change_password', methods=['POST'])
+@jwt_required()
+def chage_password():
+    data = request.get_json()
+    user_id = get_jwt_identity()
+    new_password = data.get('new_password')
+    new_password_again = data.get('new_password_again')
+    
+    try:
+        user = AuthService.change_password(user_id, new_password, new_password_again)
+        return jsonify({'message': f'Password reset for {user.email}'}), 200
+    except ValueError as error:
+        return jsonify({'message': f'{error}'})

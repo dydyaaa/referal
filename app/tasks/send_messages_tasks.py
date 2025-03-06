@@ -1,8 +1,10 @@
+from app import mail
+from celery import shared_task
 from flask import render_template_string
 from flask_mail import Message
-from app import mail
 
 
+@shared_task
 def send_password(email, password):
     html_template = """
     <html>
@@ -57,7 +59,9 @@ def send_password(email, password):
     </body>
     </html>
     """
-
+    print('task started')
+    # with current_app.app_context():
+   
     html_body = render_template_string(html_template, password=password)
 
     msg = Message(
@@ -68,3 +72,4 @@ def send_password(email, password):
     msg.html = html_body
 
     mail.send(msg)
+        

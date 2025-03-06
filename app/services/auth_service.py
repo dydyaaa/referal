@@ -5,7 +5,7 @@ from flask import current_app
 from datetime import datetime
 from app.models.user import User
 from app.models.referral import Referral
-from app.utils.message_sendrer import send_password
+from app.tasks.send_messages_tasks import send_password
 from app.utils.password_generator import generate_password
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -117,13 +117,26 @@ class AuthService:
             raise ValueError('Invalid email')
         
         new_password = generate_password()
-        # print(new_password)
         
         try:
-            send_password(email, new_password)
+            from app import celery
+            # send_password.delay(email, new_password)
+            result = celery.send_task('app.tasks.send_messages_tasks.send_password', args=(email, new_password))
+
         except Exception as error:
-            pass
+            logger.critical(f'Mail was not send! {error}')
         
         user.password_hash = generate_password_hash(new_password)
         db.session.commit()
         return user
+    
+    @staticmethod
+    def change_password(user_id, new_password, new_password_again):
+        user = User.query.filter_by(id=user_id).first()
+        
+        if new_password == new_password_again:
+            user.password_hash = generate_password_hash(new_password)
+            db.session.commit()
+            return user
+        
+        raise ValueError('Passwords are not equal')
