@@ -136,7 +136,8 @@ http://127.0.0.1:5000/swagger
 | DELETE  | <span style="color:#e6c07b;">/referral/code</span>          | Удаление активного кода      | JWT            |
 | GET     | <span style="color:#e6c07b;">/referral/code/by-email</span> | Получение кода по email      | Нет            |
 | GET     | <span style="color:#e6c07b;">/referral/referrals</span>     | Получение списка рефералов   | JWT            |
-
+## Проверка API
+API можно проверить по адресу <a href="http://45.143.203.217:5000/swagger" style="color:#e6c07b;">http://45.143.203.217:5000/swagger</a>
 ## Тестирование
 Тесты находятся в папке <span style="color:#e6c07b;">/tests</span>. Для запуска:
 ```bash
