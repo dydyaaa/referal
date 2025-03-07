@@ -1,26 +1,62 @@
+version: '3.8'
+
 services:
   referral_db:
     container_name: referral_db
+    image: postgres:14.3-alpine
+    restart: always
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_PASSWORD=root
-      - POSTGRES_USER=admin
-      - POSTGRES_DB=referral_db
-    image: postgres:14.3-alpine
+      POSTGRES_PASSWORD: root
+      POSTGRES_USER: admin
+      POSTGRES_DB: referral_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   redis_codes:
     container_name: redis_codes
+    image: redis:7.2
+    restart: always
     ports:
       - "6379:6379"
-    image: redis:7.2
+    volumes:
+      - redis_data:/data
 
-  # rabbitmq:
-  #   container_name: rabbitmq
-  #   ports:
-  #     - "5672:5672"
-  #     - "15672:15672"
-  #   environment:
-  #     - RABBITMQ_DEFAULT_USER=admin
-  #     - RABBITMQ_DEFAULT_PASS=admin
-  #   image: rabbitmq:3.12-management
+  api:
+    container_name: referral_api
+    build: .
+    restart: always
+    depends_on:
+      - referral_db
+      - redis_codes
+    ports:
+      - "5000:5000"
+    command: ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "wsgi:app"]
+    volumes:
+      - .:/app
+
+  celery_worker:
+    container_name: referral_celery
+    build: .
+    restart: always
+    depends_on:
+      - referral_db
+      - redis_codes
+    command: ["celery", "-A", "app.celery", "worker", "--loglevel=info"]
+    volumes:
+      - .:/app
+
+  db_migration:
+    build: .
+    container_name: db_migration
+    depends_on:
+      - referral_db
+    command: >
+      bash -c "flask db upgrade"
+    volumes:
+      - .:/app
+
+volumes:
+  postgres_data:
+  redis_data:

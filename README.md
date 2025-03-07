@@ -13,7 +13,7 @@ Referral System API — это RESTful сервис для управления 
 ## Функциональные возможности
 
 - **Регистрация и аутентификация**: 
-  - Hегистрироваться и входи в систему с использованием JWT-токенов.
+  - Регистрация и вход в систему с использованием JWT-токенов.
   - Сброс и смена пароля.
 - **Управление реферальными кодами**: 
   - Создание реферального кода с указанием срока годности.
@@ -116,11 +116,16 @@ python3 wsgi.py
 celery -A app.celery worker --loglevel=info
 ```
 По умолчанию сервер будет доступен по адресу <a href="http://127.0.0.1:5000" style="color:#e6c07b;">http://127.0.0.1:5000</a>
-### 7. Документация API
+## Установка и запуск через Docker
+- 1. Склонируйте репозиторий
+- 2. Создайте файл <span style="color:#e6c07b;">settings.json</span>
+- 3. Запустите docker compose
+
+## Документация API
 ```
 http://127.0.0.1:5000/swagger
 ```
-### 8. Основные эндпоинты
+## Основные эндпоинты
 | Метод   | Эндпоинт                                                    | Описание                     | Аутентификация |
 |---------|-------------------------------------------------------------|------------------------------|----------------|
 | POST    | <span style="color:#e6c07b;">/auth/register</span>          | Регистрация пользователя     | Нет            |
@@ -132,13 +137,13 @@ http://127.0.0.1:5000/swagger
 | GET     | <span style="color:#e6c07b;">/referral/code/by-email</span> | Получение кода по email      | Нет            |
 | GET     | <span style="color:#e6c07b;">/referral/referrals</span>     | Получение списка рефералов   | JWT            |
 
-### 9. Тестирование
+## Тестирование
 Тесты находятся в папке <span style="color:#e6c07b;">/tests</span>. Для запуска:
 ```bash
 python3 -m unittest
 ```
 Тесты проверяют только status code эндпоинтов
-### 10. Структура проекта
+## Структура проекта
 ```
 referral-system-api/
 ├── app/
@@ -148,9 +153,10 @@ referral-system-api/
 │   ├── services/          # Бизнес-логика
 │   ├── utils/             # Утилиты
 │   └── static/            # Статические файлы (Swagger JSON)
+│   └── tasks/             # Задачи для Celery
 ├── migrations/            # Миграции базы данных
 ├── tests/                 # Тесты
-├── docker-compose.yaml    # Контейнеры с Postgres и Redis
+├── docker-compose.yaml    # Контейнеры с Postgres, Redis и API
 ├── logging_config.py      # Конфигурация logger'a
 ├── settings.json          # Файл с настройками
 ├── requirements.txt       # Зависимости
