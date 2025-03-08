@@ -21,10 +21,10 @@ jobs:
       - name: Deploy to Server
         run: |
           ssh -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
-            cd /home/ubuntu/my-flask-app
+            cd referal
             git pull origin main
-            docker-compose down
-            docker-compose up --build -d
+            docker compose down
+            docker compose up --build -d
             docker image prune -f
           EOF
 
@@ -32,5 +32,5 @@ jobs:
         run: |
           ssh -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
             cd /home/ubuntu/my-flask-app
-            docker-compose ps
+            docker compose ps
           EOF
