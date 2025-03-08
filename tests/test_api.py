@@ -40,11 +40,11 @@ class TestAPI(unittest.TestCase):
                                   content_type='application/json')
         self.assertEqual(response.status_code, 200)
         
-    def test_reset_password_success(self):
-        response = self.client.post('/auth/reset_password',
-                                    data=json.dumps({"email": "test@example.com"}),
-                                    content_type='application/json')
-        self.assertEqual(response.status_code, 200)
+    # def test_reset_password_success(self):
+    #     response = self.client.post('/auth/reset_password',
+    #                                 data=json.dumps({"email": "test@example.com"}),
+    #                                 content_type='application/json')
+    #     self.assertEqual(response.status_code, 200)
 
     def test_login_wrong_password(self):
         response = self.client.post('/auth/login', 

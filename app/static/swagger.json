@@ -99,6 +99,40 @@
           }
         }
       },
+      "/auth/change_password": {
+        "post": {
+          "summary": "Change password for user",
+          "security": [{"JWT": []}],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "new_password": {"type": "string"},
+                    "new_password_again": {"type": "string"}
+                  },
+                  "required": ["new_password", "new_password_again"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Change password for user",
+              "content": {
+                "application/json": {
+                  "example": {"result": "password change"}
+                }
+              }
+            },
+            "401": {
+              "description": "Unauthorized"
+            }
+          }
+        }
+      },
       "/referral/code": {
         "post": {
           "summary": "Create a referral code",

@@ -54,6 +54,6 @@ def chage_password():
     
     try:
         user = AuthService.change_password(user_id, new_password, new_password_again)
-        return jsonify({'message': f'Password reset for {user.email}'}), 200
+        return jsonify({'message': f'Password change for {user.email}'}), 200
     except ValueError as error:
-        return jsonify({'message': f'{error}'})
+        return jsonify({'message': f'{error}'}), 400
