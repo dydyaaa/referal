@@ -31,6 +31,6 @@ jobs:
       - name: Verify Deployment
         run: |
           ssh -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
-            cd /home/ubuntu/my-flask-app
+            cd referal
             docker compose ps
           EOF
