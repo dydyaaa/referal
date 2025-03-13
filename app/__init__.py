@@ -69,6 +69,10 @@ def create_app(test_mode=False):
     def not_found(error):
         return jsonify({'message': 'Not Found'}), 404
     
+    @app.errorhandler(Exception)
+    def internal_server_error(error):
+        return jsonify({'message': f'Internal Server Error'}), 500
+    
     return app
 
 app = create_app()

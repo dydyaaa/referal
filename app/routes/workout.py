@@ -14,9 +14,14 @@ def add_workout():
     workout_date = data.get('workout_date')
     notes = data.get('notes')
     workout_type = data.get('workout_type', 'regular workout')
-
-    Calendar.add_workout(user_id, title, workout_date, notes, workout_type)
-
+    
+    try:
+        Calendar.add_workout(user_id, title, workout_date, notes, workout_type)
+    except ValueError as error:
+        return jsonify({'error': f'{error}'})
+    except TypeError as error:
+        return jsonify({'error': f'{error}'})
+    
     return jsonify({'workout': "created"}), 201
 
 @workout_bp.route('/get_all_user_workouts', methods=['GET'])
