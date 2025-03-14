@@ -30,4 +30,10 @@ class WorkoutValidate():
         if not workout_type.strip():
             logger.error('workout_type cannot be empty')
             raise ValueError('workout_type cannot be empty')
+        
+    def workout_validate(workout_id):
+        
+        if not isinstance(workout_id, int):
+            logger.error(f'workout_id must be int, got {type(workout_id)}')
+            raise TypeError(f'workout_id must be int, got {type(workout_id)}')
 

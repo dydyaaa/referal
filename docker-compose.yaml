@@ -30,6 +30,7 @@ services:
     depends_on:
       - referral_db
       - redis_codes
+      - db_migration
     ports:
       - "5000:5000"
     command: ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "wsgi:app"]

@@ -71,6 +71,7 @@ def create_app(test_mode=False):
     
     @app.errorhandler(Exception)
     def internal_server_error(error):
+        app.logger.error(f'505 {error}')
         return jsonify({'message': f'Internal Server Error'}), 500
     
     return app

@@ -11,5 +11,7 @@ class Workout(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.now())
     exercises = db.relationship('Exercise', backref='workout', lazy=True)
 
-    def to_dict(self):
+    def to_dict(self, fields=None):
+        if fields:
+            return {field: getattr(self, field) for field in fields if hasattr(self, field)}
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}
