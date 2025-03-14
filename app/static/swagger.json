@@ -1,270 +1,395 @@
 {
-    "openapi": "3.0.0",
-    "info": {
-      "title": "Referral System API",
-      "version": "1.0.1",
-      "description": "API для реферальной системой"
-    },
-    "paths": {
-      "/auth/register": {
-        "post": {
-          "summary": "Register a new user",
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "email": {"type": "string"},
-                    "password": {"type": "string"},
-                    "referral_code": {"type": "string", "nullable": true}
-                  },
-                  "required": ["email", "password"]
-                }
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Referral System API",
+    "version": "1.0.1",
+    "description": "API для реферальной системой"
+  },
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "summary": "Register a new user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {"type": "string"},
+                  "password": {"type": "string"},
+                  "referral_code": {"type": "string", "nullable": true}
+                },
+                "required": ["email", "password"]
               }
             }
-          },
-          "responses": {
-            "201": {
-              "description": "User registered",
-              "content": {
-                "application/json": {
-                  "example": {"result": "registered", "token": "jwt_token"}
-                }
-              }
-            },
-            "400": {"description": "Invalid input"}
-          }
-        }
-      },
-      "/auth/login": {
-        "post": {
-          "summary": "Login a user",
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "email": {"type": "string"},
-                    "password": {"type": "string"}
-                  },
-                  "required": ["email", "password"]
-                }
-              }
-            }
-          },
-          "responses": {
-            "200": {
-              "description": "User logged in",
-              "content": {
-                "application/json": {
-                  "example": {"result": "logged in", "token": "jwt_token"}
-                }
-              }
-            },
-            "401": {"description": "Invalid credentials"}
-          }
-        }
-      },
-      "/auth/reset_password": {
-        "post": {
-          "summary": "Reset a password",
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "email": {"type": "string"}
-                  },
-                  "required": ["email"]
-                }
-              }
-            }
-          },
-          "responses": {
-            "200": {
-              "description": "Email with password sent",
-              "content": {
-                "application/json": {
-                  "example": {"result": "password reset"}
-                }
-              }
-            },
-            "401": {"description": "Invalid email"}
-          }
-        }
-      },
-      "/auth/change_password": {
-        "post": {
-          "summary": "Change password for user",
-          "security": [{"JWT": []}],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "new_password": {"type": "string"},
-                    "new_password_again": {"type": "string"}
-                  },
-                  "required": ["new_password", "new_password_again"]
-                }
-              }
-            }
-          },
-          "responses": {
-            "200": {
-              "description": "Change password for user",
-              "content": {
-                "application/json": {
-                  "example": {"result": "password change"}
-                }
-              }
-            },
-            "401": {
-              "description": "Unauthorized"
-            }
-          }
-        }
-      },
-      "/referral/code": {
-        "post": {
-          "summary": "Create a referral code",
-          "security": [{"JWT": []}],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "expires_at": {"type": "string", "format": "date"}
-                  },
-                  "required": ["expires_at"]
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": "Code created",
-              "content": {
-                "application/json": {
-                  "example": {"referral_code": "ABC12345"}
-                }
-              }
-            },
-            "400": {"description": "Invalid input"}
           }
         },
-        "delete": {
-            "summary": "Delete referral code",
-            "security": [{"JWT": []}],
-            "responses": {
-              "200": {
-                "description": "Code deleted",
-                "content": {
-                  "application/json": {
-                    "schema": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
-                }
-              },
-              "400": {
-                "description": "Error deleting code"
+        "responses": {
+          "201": {
+            "description": "User registered",
+            "content": {
+              "application/json": {
+                "example": {"result": "registered", "token": "jwt_token"}
+              }
+            }
+          },
+          "400": {"description": "Invalid input"}
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "Login a user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {"type": "string"},
+                  "password": {"type": "string"}
+                },
+                "required": ["email", "password"]
               }
             }
           }
+        },
+        "responses": {
+          "200": {
+            "description": "User logged in",
+            "content": {
+              "application/json": {
+                "example": {"result": "logged in", "token": "jwt_token"}
+              }
+            }
+          },
+          "401": {"description": "Invalid credentials"}
+        }
+      }
+    },
+    "/auth/reset_password": {
+      "post": {
+        "summary": "Reset a password",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {"type": "string"}
+                },
+                "required": ["email"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Email with password sent",
+            "content": {
+              "application/json": {
+                "example": {"result": "password reset"}
+              }
+            }
+          },
+          "401": {"description": "Invalid email"}
+        }
+      }
+    },
+    "/auth/change_password": {
+      "post": {
+        "summary": "Change password for user",
+        "security": [{"JWT": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "new_password": {"type": "string"},
+                  "new_password_again": {"type": "string"}
+                },
+                "required": ["new_password", "new_password_again"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Change password for user",
+            "content": {
+              "application/json": {
+                "example": {"result": "password change"}
+              }
+            }
+          },
+          "401": {"description": "Unauthorized"}
+        }
+      }
+    },
+    "/referral/code": {
+      "post": {
+        "summary": "Create a referral code",
+        "security": [{"JWT": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "expires_at": {"type": "string", "format": "date"}
+                },
+                "required": ["expires_at"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Code created",
+            "content": {
+              "application/json": {
+                "example": {"referral_code": "ABC12345"}
+              }
+            }
+          },
+          "400": {"description": "Invalid input"}
+        }
       },
-      "/referral/code/by-email": {
-        "post": {
-          "summary": "Get referral code by email",
-          "requestBody": {
-            "required": true,
+      "delete": {
+        "summary": "Delete referral code",
+        "security": [{"JWT": []}],
+        "responses": {
+          "200": {
+            "description": "Code deleted",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "email": {
-                      "type": "string"
+                    "message": {"type": "string"}
+                  }
+                }
+              }
+            }
+          },
+          "400": {"description": "Error deleting code"}
+        }
+      }
+    },
+    "/referral/code/by-email": {
+      "post": {
+        "summary": "Get referral code by email",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Referrals by email",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "referral_code": {"type": "string"}
+                  }
+                }
+              }
+            }
+          },
+          "400": {"description": "Error receiving code"}
+        }
+      }
+    },
+    "/referral/referrals": {
+      "get": {
+        "summary": "Get referral list",
+        "security": [{"JWT": []}],
+        "responses": {
+          "200": {
+            "description": "Referral's list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "referrals": {
+                      "type": "array",
+                      "items": {"type": "string"}
                     }
                   }
                 }
               }
             }
           },
-          "responses": {
-            "200": {
-              "description": "Referrals by email",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {
-                      "referral_code": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
+          "401": {"description": "Unauthorized"}
+        }
+      }
+    },
+    "/workout/add_workout": {
+      "post": {
+        "summary": "Add a new workout",
+        "security": [{"JWT": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {"type": "string"},
+                  "workout_date": {"type": "string", "format": "date"},
+                  "notes": {"type": "string", "nullable": true},
+                  "workout_type": {"type": "string", "default": "regular workout"}
+                },
+                "required": ["title", "workout_date"]
               }
-            },
-            "400": {
-              "description": "Error receiving code"
             }
           }
-        }
-      },
-      "/referral/referrals": {
-        "get": {
-          "summary": "Get referral list",
-          "security": [{"JWT": []}],
-          "responses": {
-            "200": {
-              "description": "Referral's list",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {
-                      "referrals": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
-                }
+        },
+        "responses": {
+          "201": {
+            "description": "Workout created",
+            "content": {
+              "application/json": {
+                "example": {"workout": "created"}
               }
-            },
-            "401": {
-              "description": "Unauthorized"
             }
+          },
+          "400": {
+            "description": "Invalid input data"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
     },
-    "components": {
-      "securitySchemes": {
-        "JWT": {
-          "type": "http",
-          "scheme": "bearer",
-          "bearerFormat": "JWT"
+    "/workout/get_all_user_workouts": {
+      "get": {
+        "summary": "Get all user workouts",
+        "security": [{"JWT": []}],
+        "responses": {
+          "200": {
+            "description": "List of user workouts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "workouts": {
+                      "type": "array",
+                      "items": {"type": "object"}
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/workout/get_workout/{workout_id}": {
+      "get": {
+        "summary": "Get specific workout by ID",
+        "security": [{"JWT": []}],
+        "parameters": [
+          {
+            "name": "workout_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Workout details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "workout": {"type": "object"}
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid workout ID"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/workout/delete_workout/{workout_id}": {
+      "delete": {
+        "summary": "Delete a workout by ID",
+        "security": [{"JWT": []}],
+        "parameters": [
+          {
+            "name": "workout_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Workout deleted",
+            "content": {
+              "application/json": {
+                "example": {"workout": "deleted"}
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid workout ID"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
         }
       }
     }
+  },
+  "components": {
+    "securitySchemes": {
+      "JWT": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
   }
+}

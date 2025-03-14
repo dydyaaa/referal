@@ -59,6 +59,8 @@ def create_app(test_mode=False):
     app.register_blueprint(auth_bp, url_prefix='/auth')
     from app.routes.referral import referral_bp
     app.register_blueprint(referral_bp, url_prefix='/referral')
+    from app.routes.workout import workout_bp
+    app.register_blueprint(workout_bp, url_prefix='/workout')
     
     swagger_ui = get_swaggerui_blueprint('/swagger', '/static/swagger.json')
     app.register_blueprint(swagger_ui)
@@ -66,6 +68,11 @@ def create_app(test_mode=False):
     @app.errorhandler(404)
     def not_found(error):
         return jsonify({'message': 'Not Found'}), 404
+    
+    @app.errorhandler(Exception)
+    def internal_server_error(error):
+        app.logger.error(f'505 {error}')
+        return jsonify({'message': f'Internal Server Error'}), 500
     
     return app
 
