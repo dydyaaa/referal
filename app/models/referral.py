@@ -6,5 +6,5 @@ class Referral(db.Model):
     code = db.Column(db.String(10), unique=True, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     expires_at = db.Column(db.DateTime, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now())
     is_active = db.Column(db.Boolean, default=True)

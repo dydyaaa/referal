@@ -9,3 +9,8 @@ class Exercise(db.Model):
     sets = db.Column(db.Integer, nullable=False)
     reps = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now())
+
+    def to_dict(self, fields=None):
+        if fields:
+            return {field: getattr(self, field) for field in fields if hasattr(self, field)}
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns}
