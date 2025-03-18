@@ -1,11 +1,12 @@
-from app import db
-from app.models.referral import Referral
-from app.models.user import User
-from datetime import datetime
-from flask import current_app
 import random
 import string
 import logging
+from flask import current_app
+from datetime import datetime
+from sqlalchemy.exc import SQLAlchemyError
+from app import db
+from app.models.user import User
+from app.models.referral import Referral
 
 
 logger = logging.getLogger('app.referral')
@@ -19,17 +20,27 @@ class ReferralService:
         """
         Создание нового реферального кода для пользователя.
         Деактивирует существующий активный код, если он есть.
+        Аргументы:
+            user_id: int - ID пользователя
+            expires_at: datetime - Дата окончания действия реферального кода
+        Возвращает:
+            code: str - Реферальный код
+        Исключения:
+            SQLAlchemyError - Ошибка при добавлении нового пользователя
         """
-        # Деактивируем существующий код
         Referral.query.filter_by(user_id=user_id, is_active=True).update({'is_active': False})
         
-        # Генерируем новый код
         code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
         expires_at = datetime.strptime(expires_at, '%Y-%m-%d')
         
-        new_code = Referral(code=code, user_id=user_id, expires_at=expires_at)
-        db.session.add(new_code)
-        db.session.commit()
+        try:
+            new_code = Referral(code=code, user_id=user_id, expires_at=expires_at)
+            db.session.add(new_code)
+            db.session.commit()
+        except Exception as error:
+            db.session.rollback()
+            logger.error(f'Failed add new user: {error}')
+            raise SQLAlchemyError
         
         try:
             redis_client = current_app.redis
@@ -48,8 +59,10 @@ class ReferralService:
         Удаление активного реферального кода пользователя.
         Аргументы:
             user_id: int - ID пользователя
+        Возвращает:
+            None
         Исключения:
-            ValueError - Если активного кода нет
+            ValueError - Нет активного кода
         """
         referral = Referral.query.filter_by(user_id=user_id, is_active=True).first()
         if not referral:
@@ -73,6 +86,12 @@ class ReferralService:
     def get_code_by_email(email):
         """
         Получение активного реферального кода по email пользователя.
+        Аргументы:
+            email: str - Email пользователя
+        Возвращает:
+            code: str (None) - Реферальный код пользователя
+        Исключения:
+            ValueError - Пользователь не найдет
         """
         user = User.query.filter_by(email=email).first()
         if not user:

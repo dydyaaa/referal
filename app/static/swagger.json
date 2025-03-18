@@ -69,7 +69,7 @@
         }
       }
     },
-    "/auth/reset_password": {
+    "/user/reset_password": {
       "post": {
         "summary": "Reset a password",
         "requestBody": {
@@ -99,7 +99,7 @@
         }
       }
     },
-    "/auth/change_password": {
+    "/user/change_password": {
       "post": {
         "summary": "Change password for user",
         "security": [{"JWT": []}],

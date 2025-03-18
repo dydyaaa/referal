@@ -3,6 +3,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.services.workout_service import Calendar
 from werkzeug.exceptions import Forbidden
 
+
 workout_bp = Blueprint('workout', __name__)
 
 @workout_bp.route('/add_workout', methods=['POST'])

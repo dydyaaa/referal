@@ -5,6 +5,8 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14.3+-lightgrey.svg)
 ![Redis](https://img.shields.io/badge/Redis-7.2+-red.svg)
 ![Celery](https://img.shields.io/badge/Celery-5.4.0+-green.svg)
+![Версия](https://img.shields.io/badge/version-1.0.0-blue)
+
 
 Referral System API — это RESTful сервис для управления реферальной системой. Проект предоставляет возможность регистрации пользователей, создания и удаления реферальных кодов, а также получения информации о рефералах. Сервис построен с использованием Flask, PostgreSQL и следует принципам чистого кода и ООП.
 

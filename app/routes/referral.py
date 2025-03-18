@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.services.referral_service import ReferralService
 
+
 referral_bp = Blueprint('referral', __name__)
 
 @referral_bp.route('/code', methods=['POST'])
