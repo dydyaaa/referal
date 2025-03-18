@@ -1,6 +1,8 @@
 import os
 import json
 import redis
+import boto3
+from botocore.client import Config
 from celery import Celery
 from logging_config import setup_logging
 from flask import Flask, jsonify
@@ -34,6 +36,27 @@ def make_celery(app):
     celery.Task = ContextTask
     return celery
 
+def make_s3(app):
+    s3_client = boto3.client(
+        's3',
+        aws_access_key_id=app.config['S3_ACCESS_KEY'],
+        aws_secret_access_key=app.config['S3_SECRET_KEY'],
+        endpoint_url=app.config['S3_URL'],
+        region_name=app.config['S3_REGION'],
+        config = Config(s3={'payload_signing_enabled': False}, 
+                        signature_version="s3")
+    )
+    
+    return s3_client
+
+def make_redis(app):
+    rds = redis.Redis.from_url(
+        app.config['REDIS_URL_CACHE'], 
+        decode_responses=True)
+    
+    return rds
+
+
 def create_app(test_mode=False):
     
     app = Flask(__name__)
@@ -52,11 +75,14 @@ def create_app(test_mode=False):
     jwt.init_app(app)
     mail.init_app(app)
     
-    app.redis = redis.Redis.from_url(app.config['REDIS_URL_CACHE'], decode_responses=True)
+    app.redis = make_redis(app)
     app.celery = make_celery(app)
+    app.s3_client = make_s3(app)
 
     from app.routes.auth import auth_bp
     app.register_blueprint(auth_bp, url_prefix='/auth')
+    from app.routes.user import user_bp
+    app.register_blueprint(user_bp, url_prefix='/user')
     from app.routes.referral import referral_bp
     app.register_blueprint(referral_bp, url_prefix='/referral')
     from app.routes.workout import workout_bp
@@ -71,10 +97,11 @@ def create_app(test_mode=False):
     
     @app.errorhandler(Exception)
     def internal_server_error(error):
-        app.logger.error(f'505 {error}')
+        app.logger.error(f'{error}')
         return jsonify({'message': f'Internal Server Error'}), 500
     
     return app
+
 
 app = create_app()
 celery = app.celery
