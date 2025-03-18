@@ -131,6 +131,60 @@
         }
       }
     },
+      "/upload_avatar": {
+        "post": {
+          "summary": "Upload user avatar",
+          "description": "Takes an image and uploads it to S3, updating the user profile.",
+          "security": [{"JWT": []}],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "multipart/form-data": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "avatar": {
+                      "type": "string",
+                      "format": "binary",
+                      "description": "Файл изображения (JPEG, PNG, GIF)"
+                    }
+                  },
+                  "required": ["avatar"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Аватар успешно загружен",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": { "type": "string" },
+                      "avatar_url": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Ошибка загрузки (неверный формат или слишком большой файл)",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "message": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+    },
     "/referral/code": {
       "post": {
         "summary": "Create a referral code",
