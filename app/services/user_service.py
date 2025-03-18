@@ -6,6 +6,8 @@ from app.utils.password_generator import generate_password
 from werkzeug.security import generate_password_hash
 from sqlalchemy.exc import SQLAlchemyError
 from botocore.exceptions import ClientError
+from PIL import Image
+from io import BytesIO
 
 
 logger = logging.getLogger('app.user')
@@ -31,6 +33,21 @@ class UserService:
         file_name = f'user_{user_id}.jpg'
         key = f'avatars/{file_name}'
         avatar_url = f'{config['S3_URL']}/{config['BUCKET_NAME']}/avatars/{file_name}'
+        
+        try:
+            Image.open(BytesIO(file.read())).verify()
+            file.seek(0)
+        except Exception:
+            logger.warning(f'File is not an image!')
+            raise TypeError
+        
+        file.seek(0, 2)
+        file_size = file.tell()
+        file.seek(0)
+        
+        if file_size > 5242880:
+            logger.warning(f'File is too big')
+            raise ValueError
         
         try:
             s3_client = current_app.s3_client

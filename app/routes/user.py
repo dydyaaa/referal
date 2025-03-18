@@ -35,6 +35,11 @@ def upload_avatar():
     file = request.files["avatar"]
     user_id = get_jwt_identity()
     
-    avatar_url = UserService.upload_avatar(file, user_id)
+    try:
+        avatar_url = UserService.upload_avatar(file, user_id)
+    except TypeError:
+        return jsonify({'message': 'file is not an image'}), 401
+    except ValueError:
+        return jsonify({'message': 'file is too big'}), 401
     
-    return jsonify({'message': 'avatar upload', 'avatar_url': avatar_url})
+    return jsonify({'message': 'avatar upload', 'avatar_url': avatar_url}), 201
