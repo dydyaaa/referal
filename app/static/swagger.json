@@ -131,7 +131,7 @@
         }
       }
     },
-      "/upload_avatar": {
+      "/user/upload_avatar": {
         "post": {
           "summary": "Upload user avatar",
           "description": "Takes an image and uploads it to S3, updating the user profile.",

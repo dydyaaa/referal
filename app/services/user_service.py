@@ -8,7 +8,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from botocore.exceptions import ClientError
 from PIL import Image
 from io import BytesIO
-
+from app.tasks.send_messages_tasks import send_password
 
 logger = logging.getLogger('app.user')
 
