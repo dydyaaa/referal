@@ -4,5 +4,23 @@
     "JWT_SECRET_KEY": "test-jwt-secret-key",
     "REDIS_URL_CACHE": "redis://localhost:6379/0",
     "REDIS_URL_BROKER": "redis://localhost:6379/0",
-    "JWT_ACCESS_TOKEN_EXPIRES": 3600
+    "JWT_ACCESS_TOKEN_EXPIRES": 3600,
+    "S3_ACCESS_KEY": "",
+    "S3_SECRET_KEY": "",
+    "S3_URL": "https://s3.timeweb.cloud",
+    "S3_REGION": "ru-1",
+    "BUCKET_NAME": "",
+    "flask_profiler": {
+        "enabled": true,
+        "storage": {
+            "engine": "sqlalchemy",
+            "db_url": "sqlite:///:memory:"
+        },
+        "endpointRoot": "/profiler",
+        "basicAuth": {
+            "enabled": true,
+            "username": "admin",
+            "password": "root"
+        }
+    }
 }

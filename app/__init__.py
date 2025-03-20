@@ -2,6 +2,7 @@ import os
 import json
 import redis
 import boto3
+import flask_profiler as fp
 from botocore.client import Config
 from celery import Celery
 from logging_config import setup_logging
@@ -70,10 +71,11 @@ def create_app(test_mode=False):
     setup_logging(test_mode)
     app.logger.info("Application starting up")
     
+    fp.init_app(app)
     db.init_app(app)
-    migrate.init_app(app, db)
     jwt.init_app(app)
     mail.init_app(app)
+    migrate.init_app(app, db)
     
     app.redis = make_redis(app)
     app.celery = make_celery(app)
