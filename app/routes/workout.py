@@ -69,7 +69,9 @@ from flask import render_template_string
 import hmac
 import hashlib
 import time
+import logging
 BOT_TOKEN = '6840735329:AAEUloVHprQ359KieM1tChYeMhsReJXKdSQ'
+logger = logging.getLogger('app.auth')
 
 @workout_bp.route('/test')
 def index():
@@ -114,6 +116,8 @@ def telegram_callback():
 def verify_telegram_data(data):
     received_hash = data.get('hash')
     auth_date = data.get('auth_date')
+    logger.error(f'received_hash - {received_hash}')
+    logger.error(f'auth_date - {auth_date}')
 
     # Проверяем, что данные свежие (например, не старше 24 часов)
     if int(time.time()) - int(auth_date) > 86400:
