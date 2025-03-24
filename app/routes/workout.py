@@ -70,7 +70,7 @@ import hmac
 import hashlib
 import time
 import logging
-BOT_TOKEN = '6840735329:AAEUloVHprQ359KieM1tChYeMhsReJXKdSQ'
+BOT_TOKEN = '916278807:AAGsNPTB7NkuJ5AKqRX2njl-JrXa-IZiCVI'
 logger = logging.getLogger('app.auth')
 
 @workout_bp.route('/test')
