@@ -103,7 +103,3 @@ def create_app(test_mode=False):
         return jsonify({'message': f'Internal Server Error'}), 500
     
     return app
-
-
-app = create_app()
-celery = app.celery

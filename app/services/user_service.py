@@ -91,7 +91,7 @@ class UserService:
         new_password = generate_password()
         
         try:
-            from app import celery
+            from app.app_factory import celery
             result = celery.send_task('app.tasks.send_messages_tasks.send_password', args=(email, new_password))
 
         except Exception as error:
