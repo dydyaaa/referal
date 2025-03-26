@@ -6,6 +6,7 @@ from app.utils.validators import WorkoutValidate
 from app.models.user import User
 from app.models.workout import Workout
 from app.models.exercise import Exercise
+from app.models.set import Set
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.exceptions import Forbidden
 

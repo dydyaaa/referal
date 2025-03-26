@@ -23,6 +23,10 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
+      - name: Database migrations
+        run: |
+          flask db upgrade
+
       - name: Run tests
         run: |
           python3 -m unittest
