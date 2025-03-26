@@ -1,0 +1,4 @@
+scrape_configs:
+  - job_name: 'flask_app'
+    static_configs:
+      - targets: ['referral_api:5000']

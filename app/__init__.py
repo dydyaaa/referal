@@ -12,6 +12,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail
 from flask_jwt_extended import JWTManager
 from flask_swagger_ui import get_swaggerui_blueprint
+from prometheus_flask_exporter import PrometheusMetrics
+from prometheus_client import generate_latest
 
 
 db = SQLAlchemy()
@@ -80,6 +82,12 @@ def create_app(test_mode=False):
     app.redis = make_redis(app)
     app.celery = make_celery(app)
     app.s3_client = make_s3(app)
+    
+    app.metrics = PrometheusMetrics(app, path='/metrics')
+    
+    @app.route('/metrics')
+    def metrics_route():
+        return generate_latest(), 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
     from app.routes.auth import auth_bp
     app.register_blueprint(auth_bp, url_prefix='/auth')
