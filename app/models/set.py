@@ -1,12 +1,14 @@
 from app import db
 from datetime import datetime
 
-class Exercise(db.Model):
+
+class Set(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    workout_id = db.Column(db.Integer, db.ForeignKey('workout.id'), nullable=False)
-    name = db.Column(db.String(100), nullable=False)
+    exercise_id = db.Column(db.Integer, db.ForeignKey('exercise.id'), nullable=False)
+    weight = db.Column(db.Float, nullable=True)
+    sets = db.Column(db.Integer, nullable=False)  # Количество подходов
+    reps = db.Column(db.Integer, nullable=False)  # Количество повторений
     created_at = db.Column(db.DateTime, default=datetime.now())
-    sets = db.relationship('Set', backref='exercise', lazy=True)  # Связь с новой таблицей Set
 
     def to_dict(self, fields=None):
         if fields:

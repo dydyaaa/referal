@@ -41,31 +41,38 @@ def setup_logging(test_mode):
                 'filename': 'error.log',
                 'mode': 'a',
             },
+            'app_file': {
+                'class': 'logging.FileHandler',
+                'level': 'INFO',
+                'formatter': 'standard',
+                'filename': 'app.log',
+                'mode': 'a',
+            }
         },
         'loggers': {
             '': {
-                'handlers': ['console'] if test_mode else ['console', 'error_file'],
+                'handlers': ['console'] if test_mode else ['console', 'app_file', 'error_file'],
                 'level': 'INFO',
                 'propagate': True,
             },
             'werkzeug': {
-                'handlers': ['console'] if test_mode else ['console', 'error_file'],
+                'handlers': ['console'] if test_mode else ['console', 'app_file', 'error_file'],
                 'level': 'INFO',
                 'propagate': False,
                 'filters': ['werkzeug_filter'],
             },
             'app': {
-                'handlers': ['console'] if test_mode else ['console', 'error_file'],
+                'handlers': ['console'] if test_mode else ['console', 'app_file', 'error_file'],
                 'level': 'INFO',
                 'propagate': False,
             },
             'app.auth': {
-                'handlers': ['console'] if test_mode else ['console', 'error_file'],
+                'handlers': ['console'] if test_mode else ['console', 'app_file', 'error_file'],
                 'level': 'INFO',
                 'propagate': False,
             },
             'app.referral': {
-                'handlers': ['console'] if test_mode else ['console', 'error_file'],
+                'handlers': ['console'] if test_mode else ['console', 'app_file', 'error_file'],
                 'level': 'INFO',
                 'propagate': False,
             },

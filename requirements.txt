@@ -38,6 +38,8 @@ MarkupSafe==3.0.2
 msgpack==1.1.0
 packaging==24.2
 pillow==11.1.0
+prometheus_client==0.21.1
+prometheus_flask_exporter==0.23.2
 prompt_toolkit==3.0.50
 psutil==7.0.0
 psycopg2-binary==2.9.10
