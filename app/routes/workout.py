@@ -14,7 +14,7 @@ def add_workout():
 
     title = data.get('title')
     workout_date = data.get('workout_date')
-    notes = data.get('notes')
+    notes = data.get('notes', '')
     workout_type = data.get('workout_type', 'regular workout')
     
     try:
