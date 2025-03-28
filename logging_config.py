@@ -18,7 +18,7 @@ class LokiHandler(logging.Handler):
     def __init__(self, url, labels=None):
         super().__init__()
         # URL Loki API, например, 'http://localhost:3100/loki/api/v1/push'
-        self.url = 'http://localhost:3100/loki/api/v1/push'  
+        self.url = 'http://loki:3100/loki/api/v1/push'  
         self.labels = labels or {"job": "flask_app"}  # Метки по умолчанию
         self.session = requests.Session() 
 
@@ -79,7 +79,7 @@ def setup_logging(test_mode):
                 'class': 'logging_config.LokiHandler', 
                 'level': 'INFO',
                 'formatter': 'standard',
-                'url': 'http://localhost:3100/loki/api/v1/push',  # URL вашего Loki
+                'url': 'http://loki:3100/loki/api/v1/push',  # URL вашего Loki
                 'labels': {'job': 'flask_app', 'env': 'production'},
             }
         },
