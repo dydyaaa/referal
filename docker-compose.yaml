@@ -30,8 +30,8 @@ services:
       - redis_codes
       - db_migration
     ports:
-      - "5000:5000"
-    command: ["gunicorn", "-w", "2", "--worker-class", "gevent", "--max-requests", "1000", "--max-requests-jitter", "50", "-b", "0.0.0.0:5000", "wsgi:app"]
+      - "5001:5000"
+    command: ["gunicorn", "-w", "2", "--worker-class", "gevent", "--max-requests", "1000", "--max-requests-jitter", "50", "-b", "0.0.0.0:5001", "wsgi:app"]
     volumes:
       - ./app.log:/app/app.log
 

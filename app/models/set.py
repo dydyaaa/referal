@@ -6,7 +6,6 @@ class Set(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     exercise_id = db.Column(db.Integer, db.ForeignKey('exercise.id'), nullable=False)
     weight = db.Column(db.Float, nullable=True)
-    sets = db.Column(db.Integer, nullable=False)  # Количество подходов
     reps = db.Column(db.Integer, nullable=False)  # Количество повторений
     created_at = db.Column(db.DateTime, default=datetime.now())
 

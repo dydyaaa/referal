@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from app.services.workout_service import Calendar
+from app.services.workout_service import Calendar, WorkOut
 from werkzeug.exceptions import Forbidden
 
 
@@ -64,3 +64,42 @@ def delete_workout(workout_id):
         return jsonify({'error': 'Access denied'}), 403
     
     return jsonify({'workout': 'deleted'}), 200
+
+@workout_bp.route('/add_exercise/<int:workout_id>', methods=['POST'])
+@jwt_required()
+def add_exercise(workout_id):
+    data = request.get_json()
+    user_id = get_jwt_identity()
+    
+    name = data.get('name')
+    
+    try:
+        WorkOut.add_exercise(user_id, workout_id, name)
+    except TypeError as error:
+        return jsonify({'error': f'{error}'}), 400
+    except Forbidden:
+        return jsonify({'error': 'Access denied'}), 403
+    except ValueError:
+        return jsonify({'error': 'Workout does not exist'})
+    
+    return jsonify({'exercise': 'add'})
+
+@workout_bp.route('/add_sets/<int:exercise_id>', methods=['POST'])
+@jwt_required()
+def add_sets(exercise_id):
+    data = request.get_json()
+    user_id = get_jwt_identity()
+    
+    weight = data.get('weight')
+    reps = data.get('reps')
+    
+    try:
+        WorkOut.add_sets(user_id, exercise_id, weight, reps)
+    except TypeError as error:
+        return jsonify({'error': f'{error}'}), 400
+    except Forbidden:
+        return jsonify({'error': 'Access denied'}), 403
+    except ValueError:
+        return jsonify({'error': 'Workout does not exist'})
+    
+    return jsonify({'set': 'add'})

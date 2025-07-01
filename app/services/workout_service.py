@@ -11,7 +11,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.exceptions import Forbidden
 
 
-logger = logging.getLogger('app.auth')
+logger = logging.getLogger('app.workout')
 
 
 class Calendar():
@@ -153,4 +153,46 @@ class Calendar():
             db.session.rollback()
             logger.error(f'Failed to delete workout: {error}')
             raise SQLAlchemyError
+        
+class WorkOut():
+    @staticmethod
+    def add_exercise(user_id, workout_id, name):
+        workout = Workout.query.filter_by(id=workout_id).first()
+        if not workout:
+            raise ValueError
+        if workout.user_id != int(user_id):
+            raise Forbidden
+        
+        try:
+            new_exercise = Exercise(workout_id=workout_id, name=name)
+            db.session.add(new_exercise)
+            db.session.commit()
+            logger.info(f'Successfully added new exercise: user_id={user_id}')
+            logger.info(f'name={name}, workout_id={workout_id}')
+        except Exception as error:
+            db.session.rollback()
+            logger.error(f'Failed to add exercise: {error}')
+            raise SQLAlchemyError
+        
+    @staticmethod
+    def add_sets(user_id, exercise_id, weight, reps):
+        exercise = Exercise.query.filter_by(id=exercise_id).first()
+        
+        if not exercise:
+            raise ValueError("Exercise does not exist")
+
+        if exercise.workout.user_id != int(user_id):
+            raise Forbidden("You do not have access to this exercise")
+
+        try:
+            new_set = Set(exercise_id=exercise_id, weight=weight, reps=reps)
+            db.session.add(new_set)
+            db.session.commit()
+            logger.info(f'Successfully added new set: user_id={user_id}')
+            logger.info(f'weight={weight}, exercise={exercise_id}')
+        except Exception as error:
+            db.session.rollback()
+            logger.error(f'Failed to add set: {error}')
+            raise SQLAlchemyError
+
         

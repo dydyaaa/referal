@@ -131,59 +131,59 @@
         }
       }
     },
-      "/user/upload_avatar": {
-        "post": {
-          "summary": "Upload user avatar",
-          "description": "Takes an image and uploads it to S3, updating the user profile.",
-          "security": [{"JWT": []}],
-          "requestBody": {
-            "required": true,
+    "/user/upload_avatar": {
+      "post": {
+        "summary": "Upload user avatar",
+        "description": "Takes an image and uploads it to S3, updating the user profile.",
+        "security": [{"JWT": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "avatar": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Файл изображения (JPEG, PNG, GIF)"
+                  }
+                },
+                "required": ["avatar"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Аватар успешно загружен",
             "content": {
-              "multipart/form-data": {
+              "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "avatar": {
-                      "type": "string",
-                      "format": "binary",
-                      "description": "Файл изображения (JPEG, PNG, GIF)"
-                    }
-                  },
-                  "required": ["avatar"]
+                    "message": {"type": "string"},
+                    "avatar_url": {"type": "string"}
+                  }
                 }
               }
             }
           },
-          "responses": {
-            "201": {
-              "description": "Аватар успешно загружен",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {
-                      "message": { "type": "string" },
-                      "avatar_url": { "type": "string" }
-                    }
-                  }
-                }
-              }
-            },
-            "401": {
-              "description": "Ошибка загрузки (неверный формат или слишком большой файл)",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object",
-                    "properties": {
-                      "message": { "type": "string" }
-                    }
+          "401": {
+            "description": "Ошибка загрузки (неверный формат или слишком большой файл)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {"type": "string"}
                   }
                 }
               }
             }
           }
         }
+      }
     },
     "/referral/code": {
       "post": {
@@ -432,6 +432,169 @@
           },
           "401": {
             "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/workout/add_exercise/{workout_id}": {
+      "post": {
+        "summary": "Add an exercise to a workout",
+        "description": "Добавляет упражнение к тренировке по её ID.",
+        "security": [{"JWT": []}],
+        "parameters": [
+          {
+            "name": "workout_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Название упражнения"
+                  }
+                },
+                "required": ["name"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Упражнение успешно добавлено",
+            "content": {
+              "application/json": {
+                "example": {"exercise": "add"}
+              }
+            }
+          },
+          "400": {
+            "description": "Неверные входные данные",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {"type": "string"}
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Доступ запрещен",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {"type": "string"}
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Неавторизован"
+          }
+        }
+      }
+    },
+    "/workout/add_sets/{exercise_id}": {
+      "post": {
+        "summary": "Add set to exercise",
+        "description": "Добавляет подходы (вес и количество повторений) к упражнению по его ID.",
+        "security": [{"JWT": []}],
+        "parameters": [
+          {
+            "name": "exercise_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "weight": {
+                    "type": "number",
+                    "description": "Вес для подхода"
+                  },
+                  "reps": {
+                    "type": "integer",
+                    "description": "Количество повторений"
+                  }
+                },
+                "required": ["weight", "reps"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Подход успешно добавлен",
+            "content": {
+              "application/json": {
+                "example": {"set": "add"}
+              }
+            }
+          },
+          "400": {
+            "description": "Неверные входные данные",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {"type": "string"}
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Доступ запрещен",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {"type": "string"}
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Тренировка не существует",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {"type": "string"}
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Неавторизован"
           }
         }
       }
