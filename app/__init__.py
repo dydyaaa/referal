@@ -97,6 +97,8 @@ def create_app(test_mode=False):
     app.register_blueprint(referral_bp, url_prefix='/referral')
     from app.routes.workout import workout_bp
     app.register_blueprint(workout_bp, url_prefix='/workout')
+    from app.routes.nutrition import nutrition_bp
+    app.register_blueprint(nutrition_bp, url_prefix='/nutrition')
     
     swagger_ui = get_swaggerui_blueprint('/swagger', '/static/swagger.json')
     app.register_blueprint(swagger_ui)

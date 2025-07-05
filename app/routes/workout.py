@@ -35,6 +35,20 @@ def get_all_user_workouts():
     
     return jsonify({'workouts': workouts}), 200
 
+@workout_bp.route('/get_future_workouts', methods=['GET'])
+@jwt_required()
+def get_future_workouts():
+    user_id = get_jwt_identity()
+    
+    try:
+        future_workouts = Calendar.get_future_workouts(user_id)
+    except TypeError as error:
+        return jsonify({'error': f'{error}'}), 400
+    except Forbidden:
+        return jsonify({'error': 'Access denied'}), 403
+    
+    return jsonify({'future_workouts': future_workouts}), 200
+
 @workout_bp.route('/get_workout/<int:workout_id>', methods=['GET'])
 @jwt_required()
 def get_workout(workout_id):

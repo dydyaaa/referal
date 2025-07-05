@@ -86,6 +86,33 @@ class Calendar():
         return workouts
     
     @staticmethod
+    def get_future_workouts(user_id):
+        """
+        Получение списка будущих тренировок.
+        Аргументы:
+            user_id: int - ID пользователя
+        Возвращает:
+            future_workouts: List[dict] - Список будущих тренировок пользователя в json формате
+        Исключения:
+            ValueError: Если входные параметры некорректны
+            TypeError: Если типы данных параметров не соответствуют ожидаемым
+            SQLAlchemyError: При возникновении ошибок при работе с базой данных
+        """
+        
+        try:
+            future_workouts = Workout.query.filter(
+                Workout.user_id == user_id,
+                Workout.workout_date >= datetime.now()
+            ).all()
+            future_workouts = [workout.to_dict(['id', 'title', 'workout_date']) for workout in future_workouts]
+            logger.info(f'Successfully got future workouts from database')
+        except Exception as error:
+            logger.error(f'Failed to get data from database {error}')
+            raise SQLAlchemyError
+        
+        return future_workouts
+    
+    @staticmethod
     def get_workout(user_id, workout_id):
         """
         Получение информации о конкретной тренировоке.
