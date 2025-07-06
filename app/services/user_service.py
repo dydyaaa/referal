@@ -2,6 +2,7 @@ import logging
 from app import db
 from flask import current_app
 from app.models.user import User
+from app.models.personal_info import UserProfile
 from app.utils.password_generator import generate_password
 from werkzeug.security import generate_password_hash
 from sqlalchemy.exc import SQLAlchemyError
@@ -122,3 +123,107 @@ class UserService:
             return user
         
         raise ValueError('Passwords are not equal')
+    
+    @staticmethod
+    def add_user_info(user_id, full_name, phone_number=None, height_cm=None, weight_kg=None, goal=None, activity_level=None):
+        """
+        Добавление или обновление информации о пользователе.
+        Аргументы:
+            user_id: int - ID пользователя
+            full_name: str - Полное имя пользователя
+            phone_number: str - Номер телефона (необязательно)
+            height_cm: float - Рост в сантиметрах (необязательно)
+            weight_kg: float - Вес в килограммах (необязательно)
+            goal: str - Цель пользователя (необязательно)
+            activity_level: str - Уровень активности (необязательно)
+        Возвращает:
+            UserProfile: Объект профиля пользователя
+        Исключения:
+            SQLAlchemyError: Ошибка при работе с базой данных
+        """
+        try:
+            profile = UserProfile.query.filter_by(user_id=user_id).first()
+            if not profile:
+                profile = UserProfile(user_id=user_id)
+            
+            profile.full_name = full_name
+            profile.phone_number = phone_number
+            profile.height_cm = height_cm
+            profile.weight_kg = weight_kg
+            profile.goal = goal
+            profile.activity_level = activity_level
+            
+            db.session.add(profile)
+            db.session.commit()
+            
+            return profile
+        
+        except SQLAlchemyError as error:
+            db.session.rollback()
+            logger.error(f'Failed to add or update user info: {error}')
+            raise SQLAlchemyError('Ошибка при добавлении или обновлении информации о пользователе')
+        
+    @staticmethod
+    def get_user_info(user_id):
+        """
+        Получение информации о пользователе.
+        Аргументы:
+            user_id: int - ID пользователя
+        Возвращает:
+            UserProfile: Объект профиля пользователя
+        Исключения:
+            SQLAlchemyError: Ошибка при работе с базой данных
+        """
+        try:
+            profile = UserProfile.query.filter_by(user_id=user_id).first()
+            if not profile:
+                raise ValueError('User profile not found')
+            return profile
+        
+        except SQLAlchemyError as error:
+            logger.error(f'Failed to get user info: {error}')
+            raise SQLAlchemyError('Ошибка при получении информации о пользователе')
+        
+    @staticmethod
+    def change_user_info(user_id, full_name=None, phone_number=None, height_cm=None, weight_kg=None, goal=None, activity_level=None):
+        """
+        Изменение информации о пользователе.
+        Аргументы:
+            user_id: int - ID пользователя
+            full_name: str - Полное имя пользователя (необязательно)
+            phone_number: str - Номер телефона (необязательно)
+            height_cm: float - Рост в сантиметрах (необязательно)
+            weight_kg: float - Вес в килограммах (необязательно)
+            goal: str - Цель пользователя (необязательно)
+            activity_level: str - Уровень активности (необязательно)
+        Возвращает:
+            UserProfile: Объект профиля пользователя
+        Исключения:
+            SQLAlchemyError: Ошибка при работе с базой данных
+        """
+        
+        try:
+            profile = UserProfile.query.filter_by(user_id=user_id).first()
+            if not profile:
+                raise ValueError('User profile not found')
+            
+            if full_name is not None:
+                profile.full_name = full_name
+            if phone_number is not None:
+                profile.phone_number = phone_number
+            if height_cm is not None:
+                profile.height_cm = height_cm
+            if weight_kg is not None:
+                profile.weight_kg = weight_kg
+            if goal is not None:
+                profile.goal = goal
+            if activity_level is not None:
+                profile.activity_level = activity_level
+            
+            db.session.commit()
+            return profile
+        
+        except SQLAlchemyError as error:
+            db.session.rollback()
+            logger.error(f'Failed to change user info: {error}')
+            raise SQLAlchemyError('Ошибка при изменении информации о пользователе')

@@ -1,6 +1,6 @@
 import logging
 from flask import current_app
-from datetime import datetime
+from datetime import datetime, date
 from sqlalchemy.exc import SQLAlchemyError
 from app import db
 from app.models.user import User
@@ -68,3 +68,30 @@ class NutritionService:
         except SQLAlchemyError as error:
             logger.error(f'Failed to get food logs: {error}')
             raise SQLAlchemyError('Ошибка при получении записей о приеме пищи')
+        
+    
+    def get_today_macros_percent(user_id):
+        logs = FoodLog.query.filter_by(user_id=user_id, date=date.today()).all()
+
+        total_protein = sum(log.protein for log in logs)
+        total_fat = sum(log.fat for log in logs)
+        total_carbs = sum(log.carbs for log in logs)
+
+        total_macros = total_protein + total_fat + total_carbs
+
+        if total_macros == 0:
+            return {
+                'protein_percent': 33,
+                'fat_percent': 33,
+                'carbs_percent': 34
+            }
+        
+        protein_percent = (total_protein / total_macros) * 100
+        fat_percent = (total_fat / total_macros) * 100
+        carbs_percent = (total_carbs / total_macros) * 100
+
+        return {
+            'protein_percent': round(protein_percent, 2),
+            'fat_percent': round(fat_percent, 2),
+            'carbs_percent': round(carbs_percent, 2)
+        }

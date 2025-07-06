@@ -58,3 +58,19 @@ def get_food_logs():
         return jsonify(food_logs), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+    
+@nutrition_bp.route('/today_macros_percent', methods=['GET'])
+@jwt_required()
+def get_today_macros_percent():
+    """
+    Получение процентного соотношения макронутриентов за сегодня.
+    Возвращает:
+        dict - Словарь с процентами белков, жиров и углеводов
+    """
+    user_id = get_jwt_identity()
+
+    try:
+        macros_percent = NutritionService.get_today_macros_percent(user_id)
+        return jsonify(macros_percent), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400

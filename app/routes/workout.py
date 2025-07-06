@@ -6,6 +6,16 @@ from werkzeug.exceptions import Forbidden
 
 workout_bp = Blueprint('workout', __name__)
 
+@workout_bp.route('/get_calendar', methods=['GET'])
+def get_calendar():
+    """
+    Получение календаря текущего месяца.
+    Возвращает:
+        JSON-ответ с информацией о месяце и днях.
+    """
+    calendar_data = Calendar.get_calendar()
+    return jsonify(calendar_data), 200
+
 @workout_bp.route('/add_workout', methods=['POST'])
 @jwt_required()
 def add_workout():

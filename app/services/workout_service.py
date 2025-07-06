@@ -1,7 +1,8 @@
 import logging
+import calendar
 from app import db
 from flask import current_app
-from datetime import datetime
+from datetime import datetime, date
 from app.utils.validators import WorkoutValidate
 from app.models.user import User
 from app.models.workout import Workout
@@ -15,6 +16,31 @@ logger = logging.getLogger('app.workout')
 
 
 class Calendar():
+    @staticmethod
+    def get_calendar():
+        today = date.today()
+        year = today.year
+        month = today.month
+
+        calendar.setfirstweekday(calendar.MONDAY)
+        month_matrix = calendar.monthcalendar(year, month)
+
+        days = []
+        for week in month_matrix:
+            for day in week:
+                if day == 0:
+                    days.append({'day': None, 'type': 'empty'})
+                else:
+                    is_today = (day == today.day and month == today.month and year == today.year)
+                    days.append({'day': day, 'type': 'active' if is_today else 'default'})
+
+        return {
+            'year': year,
+            'month': month,
+            'month_name': datetime(year, month, 1).strftime('%B'),
+            'days': days
+        }
+
     @staticmethod
     def add_workout(user_id,
                     title,
