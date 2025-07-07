@@ -125,6 +125,35 @@ class UserService:
         raise ValueError('Passwords are not equal')
     
     @staticmethod
+    def get_email(user_id):
+        """
+        Получение email пользователя по user_id.
+        Аргументы:
+            user_id: int - ID пользователя
+        Возвращает:
+            str: Email пользователя
+        Исключения:
+            ValueError: Если пользователь не найден
+            TypeError: Если email не является строкой
+            SQLAlchemyError: Ошибка при работе с базой данных
+        """
+        try:
+            user = User.query.filter_by(id=user_id).first()
+            if not user:
+                raise ValueError('User not found')
+            
+            email = user.email
+            
+            if not isinstance(email, str):
+                raise TypeError('Email is not a string')
+            
+            return email
+        
+        except SQLAlchemyError as error:
+            logger.error(f'Failed to get email: {error}')
+            raise SQLAlchemyError('Ошибка при получении email пользователя')
+
+    @staticmethod
     def add_user_info(user_id, full_name, phone_number=None, height_cm=None, weight_kg=None, goal=None, activity_level=None):
         """
         Добавление или обновление информации о пользователе.

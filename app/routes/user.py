@@ -30,6 +30,21 @@ def chage_password():
     except ValueError as error:
         return jsonify({'message': f'{error}'}), 400
     
+@user_bp.route('/get_email', methods=['GET'])
+@jwt_required()
+def get_email():
+    user_id = get_jwt_identity()
+    
+    try:
+        email = UserService.get_email(user_id)
+        return jsonify({'email': email}), 200
+    except ValueError as error:
+        return jsonify({'message': f'{error}'}), 400
+    except TypeError as error:
+        return jsonify({'message': f'{error}'}), 400
+    except SQLAlchemyError as error:
+        return jsonify({'message': 'Database error'}), 500
+    
 @user_bp.route('/upload_avatar', methods=['POST'])
 @jwt_required()
 def upload_avatar():
